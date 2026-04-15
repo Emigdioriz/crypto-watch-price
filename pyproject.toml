@@ -1,0 +1,57 @@
+[project]
+name = "{{project_name}}"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.13.9"
+dependencies = [
+    "alembic>=1.17.1",
+    "asyncpg>=0.30.0",
+    "dotenv>=0.9.9",
+    "fastapi>=0.121.0",
+    "httpx>=0.28.1",
+    "psycopg[binary]>=3.2.12",
+    "pwdlib[argon2]>=0.3.0",
+    "pydantic-settings>=2.11.0",
+    "pyjwt>=2.10.1",
+    "sqlalchemy[asyncio]>=2.0.44",
+    "uvicorn>=0.38.0",
+]
+
+[dependency-groups]
+dev = [
+    "factory-boy>=3.3.3",
+    "pytest>=8.4.2",
+    "pytest-asyncio>=1.3.0",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.14.3",
+    "taskipy>=1.14.1",
+]
+
+[tool.taskipy.tasks]
+lint = 'ruff check'
+pre_format = 'ruff check --fix'
+format = 'ruff format'
+pre_test = 'task lint'
+test = 'uv run pytest -s -x --cov={{project_name}} --v'
+dev = 'uv run uvicorn src.{{project_name}}.main:app --reload'
+db-automigration = 'uv run alembic revision --autogenerate -m'
+db-migration = 'uv run alembic revision -m'
+db-migrate = 'uv run alembic upgrade head'
+key-generate = 'uv run python -c "import secrets; print(secrets.token_urlsafe(48))"'
+
+[tool.ruff]
+line-length = 85
+
+[tool.ruff.lint]
+preview = true
+select = ['I', 'F', 'E', 'W', 'PL', 'PT']
+ignore = ['E402', 'F811']
+
+[tool.ruff.format]
+preview = true
+quote-style = 'single'
+
+[tool.pytest.ini_options]
+pythonpath = ['src', 'tests']
+asyncio_mode = 'auto'
