@@ -8,12 +8,14 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from src.{{project_name}}.config.db import mapper_registry
-from src.{{project_name}}.config.env import get_settings
+from src.infraestructure.config.db import mapper_registry
+from src.infraestructure.config.env import get_settings
 
 
 connection_string = get_settings().database_url
-
+print("##########################")
+print(connection_string)
+print("##########################")
 config = context.config
 config.set_main_option('sqlalchemy.url', connection_string)
 
